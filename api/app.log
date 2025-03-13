@@ -1,0 +1,24 @@
+[2025-03-08 00:25:11] [INFO] Configuration loaded successfully
+[2025-03-08 00:25:37] [INFO] Configuration loaded successfully
+[2025-03-08 00:25:37] [INFO] Server starting on port 3000
+[2025-03-08 00:26:01] [INFO] Configuration loaded successfully
+[2025-03-08 00:26:01] [INFO] Server starting on port 3000
+[2025-03-08 00:26:06] [INFO] Received request to /
+[2025-03-08 00:38:19] [INFO] Configuration loaded successfully
+[2025-03-08 00:38:19] [INFO] Auth routes initialized
+[2025-03-08 00:38:19] [INFO] User routes initialized
+[2025-03-08 00:38:19] [INFO] Server starting on port 3000
+[2025-03-08 00:39:03] [WARN] Missing or invalid Authorization header
+[2025-03-08 00:39:03] [ERROR] Response error: Unauthorized
+[2025-03-08 18:06:09] [INFO] Configuration loaded successfully
+[2025-03-08 18:06:09] [INFO] Auth routes initialized
+[2025-03-08 18:06:09] [INFO] User routes initialized
+[2025-03-08 18:06:09] [INFO] Server starting on port 3000
+[2025-03-08 18:10:09] [INFO] Configuration loaded successfully
+[2025-03-08 18:10:09] [INFO] Auth routes initialized
+[2025-03-08 18:10:09] [INFO] User routes initialized
+[2025-03-08 18:10:09] [INFO] Server starting on port 3000
+[2025-03-08 18:13:47] [INFO] Configuration loaded successfully
+[2025-03-08 18:13:47] [INFO] Auth routes initialized
+[2025-03-08 18:13:47] [INFO] User routes initialized
+[2025-03-08 18:13:47] [INFO] Server starting on port 3000
