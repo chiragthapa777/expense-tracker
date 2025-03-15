@@ -2,9 +2,9 @@ package middleware
 
 import (
 	"fmt"
-	"net/http"
 	"strings"
 
+	fileModule "github.com/chiragthapa777/expense-tracker-api/internal/modules/file"
 	"github.com/chiragthapa777/expense-tracker-api/internal/response"
 	"github.com/chiragthapa777/expense-tracker-api/internal/types"
 	"github.com/chiragthapa777/expense-tracker-api/internal/utils"
@@ -101,28 +101,14 @@ func FileCheck(config ...FileCheckConfig) fiber.Handler {
 					Status: fiber.StatusBadRequest,
 				})
 			}
-
-			// Open file to detect content type
-			f, err := file.Open()
+			// Detect content type
+			contentType, err := fileModule.GetFileMimeType(file)
 			if err != nil {
 				return response.SendError(c, types.ErrorResponseOption{
-					Error: fmt.Errorf("failed to open file '%s': %v", file.Filename, err),
-				})
-			}
-			defer f.Close()
-
-			// Read first 512 bytes to detect MIME type
-			buffer := make([]byte, 512)
-			n, err := f.Read(buffer)
-			if err != nil {
-				return response.SendError(c, types.ErrorResponseOption{
-					Error:  fmt.Errorf("failed to read file '%s': %v", file.Filename, err),
+					Error:  err,
 					Status: fiber.StatusBadRequest,
 				})
 			}
-
-			// Detect content type
-			contentType := http.DetectContentType(buffer[:n])
 			allowed := false
 			for _, allowedType := range cfg.AllowedTypes {
 				if strings.HasPrefix(contentType, allowedType) {
@@ -138,13 +124,6 @@ func FileCheck(config ...FileCheckConfig) fiber.Handler {
 				})
 			}
 
-			// Reset file reader for downstream handlers
-			_, err = f.Seek(0, 0)
-			if err != nil {
-				return response.SendError(c, types.ErrorResponseOption{
-					Error: fmt.Errorf("failed to reset file '%s': %v", file.Filename, err),
-				})
-			}
 		}
 
 		// All files passed validation, proceed to next handler

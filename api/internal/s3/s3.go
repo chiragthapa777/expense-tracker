@@ -65,16 +65,17 @@ func GetS3() *S3 {
 	return s3Instance
 }
 
-func (s S3) UploadFile(ctx context.Context, objectKey string, fileHeader multipart.FileHeader) error {
+func (s S3) UploadFile(ctx context.Context, objectKey string, ContentType *string, fileHeader multipart.FileHeader) error {
 	file, err := fileHeader.Open()
 	if err != nil {
 		return err
 	}
 
 	_, err = s.client.PutObject(ctx, &s3.PutObjectInput{
-		Bucket: aws.String(s.bucketName),
-		Key:    aws.String(objectKey),
-		Body:   file,
+		Bucket:      aws.String(s.bucketName),
+		Key:         aws.String(objectKey),
+		Body:        file,
+		ContentType: ContentType,
 	})
 
 	if err != nil {

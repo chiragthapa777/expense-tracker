@@ -2,7 +2,7 @@
 include .$(PWD)/.env
 
 DATABASE_URL=postgres://$(DB_USER):$(DB_PASS)@$(DB_HOST):$(DB_PORT)/$(DB_NAME)?sslmode=disable
-BINARY_PATH=./tmp/server
+BINARY_PATH=./tmp/server.exe
 MAIN_PATH=./cmd/server/main.go
 
 build:

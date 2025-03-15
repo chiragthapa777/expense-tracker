@@ -26,20 +26,24 @@ func UploadImages(c *fiber.Ctx) error {
 
 	var wg sync.WaitGroup
 	errChan := make(chan error, len(files))
+	fileChan := make(chan models.File, len(files))
 
 	for _, file := range files {
 		wg.Add(1)
 		go func(file *multipart.FileHeader, currentUser models.User) {
 			defer wg.Done()
-			err := UploadFileAndSaveToDb(file, currentUser)
+			newFile, err := UploadFileAndSaveToDb(file, currentUser)
 			if err != nil {
 				errChan <- err
+			} else {
+				fileChan <- *newFile
 			}
 		}(file, *currentUser)
 	}
 
 	wg.Wait()
 	close(errChan)
+	close(fileChan)
 
 	var errors []error
 	for err := range errChan {
@@ -51,5 +55,10 @@ func UploadImages(c *fiber.Ctx) error {
 		return response.SendError(c, types.ErrorResponseOption{Error: fmt.Errorf("upload failed: %v", errors)})
 	}
 
-	return response.Send(c, types.ResponseOption{})
+	var newFiles []models.File
+	for file := range fileChan {
+		newFiles = append(newFiles, file)
+	}
+
+	return response.Send(c, types.ResponseOption{Data: newFiles})
 }

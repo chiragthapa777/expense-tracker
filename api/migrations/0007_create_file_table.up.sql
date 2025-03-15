@@ -7,9 +7,8 @@ CREATE TABLE files (
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
     deleted_at TIMESTAMP WITH TIME ZONE,
-    type VARCHAR NOT NULL,
     mime_type VARCHAR NOT NULL,
-    file_name VARCHAR UNIQUE,
+    file_name VARCHAR UNIQUE NOT NULL,
     path_name VARCHAR NOT NULL,
     alt_text TEXT,
     is_private BOOLEAN NOT NULL DEFAULT FALSE, -- Added NOT NULL for clarity
