@@ -1,0 +1,1 @@
+it will include next js web for user and admin and landing page as well

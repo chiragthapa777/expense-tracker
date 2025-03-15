@@ -1,5 +1,5 @@
 # Load environment variables from .env
-include .$(PWD)/.env
+include .env
 
 DATABASE_URL=postgres://$(DB_USER):$(DB_PASS)@$(DB_HOST):$(DB_PORT)/$(DB_NAME)?sslmode=disable
 BINARY_PATH=./tmp/server.exe
