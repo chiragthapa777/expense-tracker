@@ -1,3 +1,7 @@
+# Load environment variables from .env
+include .$(PWD)/.env
+
+DATABASE_URL=postgres://$(DB_USER):$(DB_PASS)@$(DB_HOST):$(DB_PORT)/$(DB_NAME)?sslmode=disable
 BINARY_PATH=./tmp/server
 MAIN_PATH=./cmd/server/main.go
 
@@ -13,8 +17,10 @@ run:
 dev:
 	air -c ".air.toml"
 migrate-up:
-	migrate -path ./migrations -database "postgres://myuser:mypassword@localhost:5432/expense-tracker?sslmode=disable" up
+	migrate -path ./migrations -database "$(DATABASE_URL)" up
+
 migrate-down:
-	migrate -path ./migrations -database "postgres://myuser:mypassword@localhost:5432/expense-tracker?sslmode=disable" down 1
+	migrate -path ./migrations -database "$(DATABASE_URL)" down 1
+
 migrate-down-all:
-	migrate -path ./migrations -database "postgres://myuser:mypassword@localhost:5432/expense-tracker?sslmode=disable" down
+	migrate -path ./migrations -database "$(DATABASE_URL)" down

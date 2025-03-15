@@ -14,3 +14,11 @@ func NilSafeString(data *string) string {
 	}
 	return *data
 }
+
+func MergeSlices[T any](slices ...[]T) []T {
+	var result []T
+	for _, slice := range slices {
+		result = append(result, slice...)
+	}
+	return result
+}

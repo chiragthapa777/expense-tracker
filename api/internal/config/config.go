@@ -23,6 +23,8 @@ type Config struct {
 	R2_TOKEN             string `validate:"required"`
 	R2_ACCESS_KEY_ID     string `validate:"required"`
 	R2_SECRET_ACCESS_KEY string `validate:"required"`
+	R2_BUCKET_NAME       string `validate:"required"`
+	R2_ACCOUNT_ID        string `validate:"required"`
 }
 
 var (
@@ -66,6 +68,8 @@ func loadConfig() Config {
 	cfg.R2_TOKEN = getEnv("R2_TOKEN", "")
 	cfg.R2_ACCESS_KEY_ID = getEnv("R2_ACCESS_KEY_ID", "")
 	cfg.R2_SECRET_ACCESS_KEY = getEnv("R2_SECRET_ACCESS_KEY", "")
+	cfg.R2_BUCKET_NAME = getEnv("R2_BUCKET_NAME", "")
+	cfg.R2_ACCOUNT_ID = getEnv("R2_ACCOUNT_ID", "")
 
 	// Validate the config using the validator
 	if err := validateConfig(cfg, log); err != nil {
