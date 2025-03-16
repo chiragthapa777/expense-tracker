@@ -122,7 +122,7 @@ func CurrentUser(c *fiber.Ctx) (*models.User, error) {
 		return nil, repository.ErrRecordNotFound
 	}
 
-	user, err := userRepository.FindByID(userID, repository.Option{})
+	user, err := userRepository.FindByIdWithJoins(userID)
 	if err != nil {
 		return nil, err
 	}

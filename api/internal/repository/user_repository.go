@@ -46,6 +46,19 @@ func (r *UserRepository) FindByEmail(email string) (*models.User, error) {
 	return &user, nil
 }
 
+func (r *UserRepository) FindByIdWithJoins(id string) (*models.User, error) {
+	db := r.db
+	var entity models.User
+	err := db.Joins("Profile").Where(&models.User{BaseModel: models.BaseModel{ID: id}}).First(&entity).Error
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return nil, nil // Or a custom error
+		}
+		return nil, err
+	}
+	return &entity, nil
+}
+
 func (r *UserRepository) UpdatePassword(userId string, newPassword string, option Option) error {
 	db := r.getDB(option)
 

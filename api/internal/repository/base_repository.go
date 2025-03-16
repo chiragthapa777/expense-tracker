@@ -61,7 +61,7 @@ func (r *BaseRepository[T]) Update(entity *T, option Option) error {
 func (r *BaseRepository[T]) Delete(id string, option Option) error {
 	db := r.getDB(option)
 	var entity T
-	return db.Where("id = ?", id).Delete(&entity).Error
+	return db.Unscoped().Where("id = ?", id).Delete(&entity).Error
 }
 
 func (r *BaseRepository[T]) Find(option Option) ([]T, error) {

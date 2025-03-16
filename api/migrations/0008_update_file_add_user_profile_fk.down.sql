@@ -1,0 +1,2 @@
+ALTER TABLE files DROP CONSTRAINT IF EXISTS fk_user_profile;
+ALTER TABLE files DROP COLUMN IF EXISTS user_profile_id;

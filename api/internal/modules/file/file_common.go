@@ -1,16 +1,21 @@
 package file
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"mime/multipart"
+	"strings"
 	"sync"
 
 	"github.com/chiragthapa777/expense-tracker-api/internal/models"
 	"github.com/chiragthapa777/expense-tracker-api/internal/modules/auth"
+	"github.com/chiragthapa777/expense-tracker-api/internal/repository"
 	"github.com/chiragthapa777/expense-tracker-api/internal/response"
+	"github.com/chiragthapa777/expense-tracker-api/internal/s3"
 	"github.com/chiragthapa777/expense-tracker-api/internal/types"
 	"github.com/gofiber/fiber/v2"
+	"github.com/google/uuid"
 )
 
 func UploadImages(c *fiber.Ctx) error {
@@ -61,4 +66,35 @@ func UploadImages(c *fiber.Ctx) error {
 	}
 
 	return response.Send(c, types.ResponseOption{Data: newFiles})
+}
+
+func DeleteFiles(c *fiber.Ctx) error {
+	ids := c.Params("ids")
+	if ids == "" {
+		return response.SendError(c, types.ErrorResponseOption{Error: errors.New("file id is required"), Status: fiber.StatusBadRequest})
+	}
+	fileIds := strings.Split(ids, ",")
+	for _, fileId := range fileIds {
+		if err := uuid.Validate(fileId); err != nil {
+			return response.SendError(c, types.ErrorResponseOption{Error: err, Status: fiber.StatusBadRequest})
+		}
+	}
+
+	fileRepository := repository.NewFileRepository()
+	s3 := s3.GetS3()
+
+	for _, fileId := range fileIds {
+		foundFile, err := fileRepository.FindByID(fileId, repository.Option{})
+		if err != nil {
+			return response.SendError(c, types.ErrorResponseOption{Error: err})
+		}
+		if foundFile == nil {
+			return response.SendError(c, types.ErrorResponseOption{Error: repository.ErrRecordNotFound})
+		}
+		fileRepository.Delete(foundFile.ID, repository.Option{})
+		key := foundFile.PathName + "/" + foundFile.FileName
+		s3.DeleteObject(context.TODO(), key, "", false)
+	}
+
+	return response.Send(c, types.ResponseOption{Data: "Files deleted successfully"})
 }

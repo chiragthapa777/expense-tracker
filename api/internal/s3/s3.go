@@ -100,10 +100,10 @@ func (s S3) UploadFile(ctx context.Context, objectKey string, ContentType *strin
 	return nil
 }
 
-func (s S3) DeleteObject(ctx context.Context, bucket string, key string, versionId string, bypassGovernance bool) (bool, error) {
+func (s S3) DeleteObject(ctx context.Context, key string, versionId string, bypassGovernance bool) (bool, error) {
 	deleted := false
 	input := &s3.DeleteObjectInput{
-		Bucket: aws.String(bucket),
+		Bucket: aws.String(s.bucketName),
 		Key:    aws.String(key),
 	}
 	if versionId != "" {
@@ -117,12 +117,12 @@ func (s S3) DeleteObject(ctx context.Context, bucket string, key string, version
 		var noKey *types.NoSuchKey
 		var apiErr *smithy.GenericAPIError
 		if errors.As(err, &noKey) {
-			log.Printf("Object %s does not exist in %s.\n", key, bucket)
+			log.Printf("Object %s does not exist in %s.\n", key, s.bucketName)
 			err = noKey
 		} else if errors.As(err, &apiErr) {
 			switch apiErr.ErrorCode() {
 			case "AccessDenied":
-				log.Printf("Access denied: cannot delete object %s from %s.\n", key, bucket)
+				log.Printf("Access denied: cannot delete object %s from %s.\n", key, s.bucketName)
 				err = nil
 			case "InvalidArgument":
 				if bypassGovernance {
@@ -134,9 +134,9 @@ func (s S3) DeleteObject(ctx context.Context, bucket string, key string, version
 		return false, err
 	}
 	err = s3.NewObjectNotExistsWaiter(s.client).Wait(
-		ctx, &s3.HeadObjectInput{Bucket: aws.String(bucket), Key: aws.String(key)}, time.Minute)
+		ctx, &s3.HeadObjectInput{Bucket: aws.String(s.bucketName), Key: aws.String(key)}, time.Minute)
 	if err != nil {
-		log.Printf("Failed attempt to wait for object %s in bucket %s to be deleted.\n", key, bucket)
+		log.Printf("Failed attempt to wait for object %s in bucket %s to be deleted.\n", key, s.bucketName)
 	} else {
 		deleted = true
 	}

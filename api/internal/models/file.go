@@ -32,12 +32,13 @@ func (j JSONB) Value() (driver.Value, error) {
 
 type File struct {
 	BaseModel
-	MimeType  string `gorm:"type:varchar;not null" json:"mimeType"`
-	FileName  string `gorm:"type:varchar;unique" json:"fileName"`
-	PathName  string `gorm:"type:varchar;not null" json:"pathName"`
-	AltText   string `gorm:"type:text" json:"altText"`
-	IsPrivate bool   `gorm:"not null;default:false" json:"isPrivate"`
-	Variants  JSONB  `gorm:"type:jsonb" json:"variants"`
+	MimeType      string  `gorm:"type:varchar;not null" json:"mimeType"`
+	FileName      string  `gorm:"type:varchar;unique" json:"fileName"`
+	PathName      string  `gorm:"type:varchar;not null" json:"pathName"`
+	AltText       string  `gorm:"type:text" json:"altText"`
+	IsPrivate     bool    `gorm:"not null;default:false" json:"isPrivate"`
+	Variants      JSONB   `gorm:"type:jsonb" json:"variants"`
+	UserProfileID *string `gorm:"column:user_profile_id;type:uuid;unique" json:"userProfileId,omitempty"`
 
 	SignedUrl *string `gorm:"-" json:"signedUrl,omitempty"`
 }

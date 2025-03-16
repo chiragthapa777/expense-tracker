@@ -24,4 +24,5 @@ type User struct {
 
 	// associations
 	LoginLogs *[]LoginLog `gorm:"foreignKey:user_id;references:id" json:"loginLogs,omitempty"`
+	Profile   *File       `gorm:"foreignKey:user_profile_id;references:id" json:"profile"`
 }

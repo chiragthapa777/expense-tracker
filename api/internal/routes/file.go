@@ -12,6 +12,7 @@ func SetupFileRoutes(app fiber.Router) {
 	fileRouterGroup := app.Group("/file", middleware.AuthGuard)
 
 	fileRouterGroup.Post("/upload-images", middleware.FileCheck(middleware.ImageFileCheckConfig), file.UploadImages)
+	fileRouterGroup.Delete("/:ids", file.DeleteFiles)
 
 	log.Info("File routes initialized")
 }
