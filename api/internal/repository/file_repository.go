@@ -25,3 +25,9 @@ func (r *FileRepository) FindWithPagination(option Option) (*PaginationResult[mo
 	searchFields := []string{"file_name", "path_name", "alt_text"}
 	return r.BaseRepository.FindWithPagination(option, searchFields, GetFileValidSortColumn())
 }
+
+func (r *FileRepository) FindByUserProfileId(userId string, option Option) (*models.File, error) {
+	var file models.File
+	err := r.getDB(option).Where(&models.File{UserProfileID: &userId}).First(&file).Error
+	return &file, err
+}

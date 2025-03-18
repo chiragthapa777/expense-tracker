@@ -3,6 +3,7 @@ package user
 import (
 	"errors"
 
+	"github.com/chiragthapa777/expense-tracker-api/internal/database"
 	"github.com/chiragthapa777/expense-tracker-api/internal/dto"
 	"github.com/chiragthapa777/expense-tracker-api/internal/modules/auth"
 	"github.com/chiragthapa777/expense-tracker-api/internal/repository"
@@ -29,11 +30,21 @@ func UpdateProfile(c *fiber.Ctx) error {
 	currentUser.FirstName = body.FirstName
 	currentUser.LastName = body.LastName
 
-	if err := userRepository.Update(currentUser, repository.Option{}); err != nil {
+	tx := database.DB.Begin()
+
+	if err := userRepository.Update(currentUser, repository.Option{Tx: tx}); err != nil {
+		tx.Rollback()
 		return response.SendError(c, types.ErrorResponseOption{Error: err})
 	}
 
-	return response.Send(c, types.ResponseOption{Data: currentUser})
+	if err := UpdateProfilePicture(*body, *currentUser, repository.Option{Tx: tx}); err != nil {
+		tx.Rollback()
+		return response.SendError(c, types.ErrorResponseOption{Error: err})
+	}
+
+	tx.Commit()
+
+	return response.Send(c, types.ResponseOption{})
 }
 
 func UpdatePassword(c *fiber.Ctx) error {

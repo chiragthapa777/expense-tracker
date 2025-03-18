@@ -52,10 +52,18 @@ func (r *UserRepository) FindByIdWithJoins(id string) (*models.User, error) {
 	err := db.Joins("Profile").Where(&models.User{BaseModel: models.BaseModel{ID: id}}).First(&entity).Error
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
-			return nil, nil // Or a custom error
+			return nil, nil
 		}
 		return nil, err
 	}
+
+	// If profile exists, set its presigned URL
+	if entity.Profile != nil {
+		if err := entity.Profile.SetPresignedUrl(); err != nil {
+			return nil, err
+		}
+	}
+
 	return &entity, nil
 }
 

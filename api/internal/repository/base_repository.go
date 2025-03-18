@@ -50,6 +50,9 @@ func (r *BaseRepository[T]) FindByID(id string, option Option) (*T, error) {
 		}
 		return nil, err
 	}
+	if &entity == nil {
+		return nil, ErrRecordNotFound
+	}
 	return &entity, nil
 }
 
