@@ -20,4 +20,10 @@ func SetUpRoutes(app *fiber.App) {
 	SetupUserRoutes(v1)
 	SetupFileRoutes(v1)
 
+	// New routes
+	SetupBankRoutes(v1)
+	SetupWalletRoutes(v1)
+	SetupUserAccountRoutes(v1)
+	SetupCategoryRoutes(v1)
+	SetupLedgerRoutes(v1)
 }

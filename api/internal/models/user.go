@@ -23,6 +23,8 @@ type User struct {
 	Role                UserRoleEnum
 
 	// associations
-	LoginLogs *[]LoginLog `gorm:"foreignKey:user_id;references:id" json:"loginLogs,omitempty"`
-	Profile   *File       `gorm:"foreignKey:UserProfileID;references:id" json:"profile"`
+	LoginLogs *[]LoginLog    `gorm:"foreignKey:user_id;references:id" json:"loginLogs,omitempty"`
+	Profile   *File          `gorm:"foreignKey:UserProfileID;references:id" json:"profile"`
+	Accounts  *[]UserAccount `gorm:"foreignKey:user_id;references:id" json:"accounts,omitempty"`
+	Ledgers   *[]Ledger      `gorm:"foreignKey:user_id;references:id" json:"ledgers,omitempty"`
 }
