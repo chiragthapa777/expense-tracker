@@ -29,9 +29,10 @@ const KeyboardView = ({ children, style }: Props) => {
         },
         style,
       ]}
+      keyboardVerticalOffset={100}
     >
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <>{children}</>
+        {children}
       </TouchableWithoutFeedback>
     </KeyboardAvoidingView>
   );
