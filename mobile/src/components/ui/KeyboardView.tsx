@@ -1,17 +1,13 @@
 import {
-  Button,
   Keyboard,
   KeyboardAvoidingView,
   Platform,
   StyleProp,
-  StyleSheet,
-  TextInput,
   TouchableWithoutFeedback,
-  View,
   ViewStyle,
 } from "react-native";
-import { useColor } from "../../theme";
 import React from "react";
+import { useColor } from "../../theme";
 
 type Props = {
   children: React.ReactNode;
@@ -19,20 +15,14 @@ type Props = {
 };
 
 const KeyboardView = ({ children, style }: Props) => {
-  const color = useColor();
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
-      style={[
-        {
-          //   backgroundColor: color.surface,
-        },
-        style,
-      ]}
-      keyboardVerticalOffset={100}
+      style={[{ flex: 1 }, style]} // Ensure it takes full space
+      // keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 10} // Adjust for Android status bar if needed
     >
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        {children}
+        <>{children}</>
       </TouchableWithoutFeedback>
     </KeyboardAvoidingView>
   );

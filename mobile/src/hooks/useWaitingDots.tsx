@@ -6,14 +6,12 @@ export const useWaitingDots = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       setWaitingDots((prevDots) => {
-        // Remove spaces and count dots
         const dotCount = prevDots.replace(/\s/g, "").length;
 
         if (dotCount === 3) {
-          return "   "; // Reset to 3 spaces
+          return "   "; 
         }
 
-        // Add a dot and pad with spaces to maintain width of 3
         const newDotCount = dotCount + 1;
         return ".".repeat(newDotCount) + " ".repeat(3 - newDotCount);
       });

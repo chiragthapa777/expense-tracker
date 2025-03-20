@@ -16,9 +16,9 @@ func SetUpRoutes(app *fiber.App) {
 		return c.SendString("Hello, World!")
 	})
 
-	// SetupAuthRoutes(v1)
-	// SetupUserRoutes(v1)
-	// SetupFileRoutes(v1)
+	SetupAuthRoutes(v1)
+	SetupUserRoutes(v1)
+	SetupFileRoutes(v1)
 
 	// // New routes
 	// SetupBankRoutes(v1)

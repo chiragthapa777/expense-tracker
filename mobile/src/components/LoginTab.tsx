@@ -6,8 +6,8 @@ import { useColor } from "../theme";
 
 type Props = {
   children: React.ReactNode;
-  setActiveTab: React.Dispatch<React.SetStateAction<"email" | "phone">>;
-  activeTab: "email" | "phone";
+  setActiveTab: React.Dispatch<React.SetStateAction<"login" | "register">>;
+  activeTab: "login" | "register";
 };
 
 const LoginTab = ({ children, activeTab, setActiveTab }: Props) => {
@@ -36,11 +36,11 @@ const LoginTab = ({ children, activeTab, setActiveTab }: Props) => {
         <Pressable
           onPress={() => {
             Haptics.selectionAsync();
-            setActiveTab("email");
+            setActiveTab("login");
           }}
           android_ripple={{
             color: color.primaryDim,
-            radius: 70,
+            radius: 80,
           }}
           style={{
             paddingHorizontal: 20,
@@ -53,25 +53,27 @@ const LoginTab = ({ children, activeTab, setActiveTab }: Props) => {
             style={[
               {
                 paddingVertical: 15,
+                borderBottomWidth: 3,
+                borderColor: "transparent",
               },
-              activeTab === "email" && {
+              activeTab === "login" && {
                 borderBottomWidth: 3,
                 borderColor: color.primary,
                 color: color.primary,
               },
             ]}
           >
-            Email Address
+            Login To Account
           </Text>
         </Pressable>
         <Pressable
           onPress={() => {
             Haptics.selectionAsync();
-            setActiveTab("phone");
+            setActiveTab("register");
           }}
           android_ripple={{
             color: color.primaryDim,
-            radius: 70,
+            radius: 80,
           }}
           style={{
             paddingHorizontal: 20,
@@ -84,15 +86,17 @@ const LoginTab = ({ children, activeTab, setActiveTab }: Props) => {
             style={[
               {
                 paddingVertical: 15,
+                borderBottomWidth: 3,
+                borderColor: "transparent",
               },
-              activeTab === "phone" && {
+              activeTab === "register" && {
                 borderBottomWidth: 3,
                 borderColor: color.primary,
                 color: color.primary,
               },
             ]}
           >
-            Phone Number
+            Create New Account
           </Text>
         </Pressable>
       </View>
