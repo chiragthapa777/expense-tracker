@@ -11,6 +11,7 @@ import (
 
 func main() {
 	log := logger.GetLogger()
+	log.Info("test1")
 
 	config := config.GetConfig()
 
