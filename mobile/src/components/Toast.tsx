@@ -5,6 +5,8 @@ import Toast, { BaseToastProps } from "react-native-toast-message";
 import Text from "./ui/Text";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import { capitalize } from "@/utils/stringUtils";
+
 
 export default function CustomToast() {
   const color = useColor();
@@ -43,13 +45,15 @@ export default function CustomToast() {
         }}
       >
         {text1 && (
-          <Text color={textColor} size="md" weight="semibold">
-            {text1}
+          <Text color={textColor} size="md" weight="semibold" style={{
+            
+          }}>
+            {capitalize(text1)}
           </Text>
         )}
         {text2 && (
           <Text color={color.textSecondary} size="xs" weight="light">
-            {text2}
+            {capitalize(text2)}
           </Text>
         )}
       </View>

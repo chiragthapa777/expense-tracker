@@ -1,8 +1,12 @@
-import axios, { AxiosInstance, InternalAxiosRequestConfig, AxiosResponse } from "axios";
+import axios, {
+  AxiosInstance,
+  InternalAxiosRequestConfig,
+  AxiosResponse,
+} from "axios";
 import { navigationRef } from "../App"; // Adjust path to App.tsx
 import { getData, removeData } from "@/utils/asyncStore";
 
-const BASE_URL = process.env.BASE_API_URL;
+const BASE_URL = process.env.EXPO_PUBLIC_BASE_API_URL;
 
 const api: AxiosInstance = axios.create({
   baseURL: BASE_URL,
@@ -14,7 +18,9 @@ const api: AxiosInstance = axios.create({
 
 // Request Interceptor
 api.interceptors.request.use(
-  async (config: InternalAxiosRequestConfig): Promise<InternalAxiosRequestConfig> => {
+  async (
+    config: InternalAxiosRequestConfig
+  ): Promise<InternalAxiosRequestConfig> => {
     const token = await getData("accessToken"); // Replace with real token logic (e.g., AsyncStorage)
     if (token && config.headers) {
       config.headers.set("Authorization", `Bearer ${token}`); // Use set() for type safety
@@ -28,6 +34,7 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response: AxiosResponse) => response.data,
   async (error) => {
+    console.log("🚀 ~ error:", error);
     if (error.response) {
       const { status } = error.response;
       if (status === 401) {

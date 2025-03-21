@@ -10,6 +10,8 @@ import {
 } from "react-native";
 import { useColor } from "../../theme";
 import * as Haptics from "expo-haptics";
+import AntDesign from "@expo/vector-icons/AntDesign";
+import SpinningLoader from "./Loader";
 
 type ButtonVariants =
   | "default"
@@ -27,6 +29,7 @@ type Props = PressableProps & {
   size?: ButtonSize;
   fullWidth?: boolean;
   style?: StyleProp<ViewStyle>;
+  loading?: boolean;
 };
 
 export const Button = React.forwardRef<
@@ -43,11 +46,13 @@ export const Button = React.forwardRef<
       onPress,
       onLongPress,
       disabled,
+      loading,
       ...props
     },
     ref
   ) => {
     const colors = useColor();
+    disabled = disabled || loading
 
     // Variant styles
     const variantStyles: Record<ButtonVariants, ViewStyle> = {
@@ -115,7 +120,7 @@ export const Button = React.forwardRef<
           variantStyles[variant],
           sizeStyles[size],
           fullWidth && { width: "100%" },
-          disabled && { opacity: 0.5 }, // Added for disabled state
+          (disabled) && { opacity: 0.5 }, // Added for disabled state
           style,
         ]}
         android_ripple={{ color: colors.primaryOverlayDim }} // Consistent ripple for all variants
@@ -134,6 +139,9 @@ export const Button = React.forwardRef<
         disabled={disabled}
         {...props}
       >
+        {loading && (
+          <SpinningLoader size={16} color={textColorStyles[variant].color} />
+        )}
         {typeof children === "string" ? (
           <Text style={[styles.baseText, textColorStyles[variant]]}>
             {children}
@@ -153,6 +161,8 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     alignItems: "center",
     justifyContent: "center",
+    flexDirection:"row",
+    gap:4
   },
   baseText: {
     fontSize: 16,

@@ -3,7 +3,7 @@ import { User } from "../types/user";
 
 type AuthState = {
   user: User | null;
-  isAuthorized: false;
+  isAuthorized: boolean;
 };
 
 interface AuthStateAction {
@@ -13,5 +13,6 @@ interface AuthStateAction {
 export const userAuthStore = create<AuthState & AuthStateAction>()((set) => ({
   user: null,
   isAuthorized: false,
-  setUser: (user) => set((state) => ({ user })),
+  setUser: (user) =>
+    set((state) => ({ user, isAuthorized: user === null ? false : true })),
 }));

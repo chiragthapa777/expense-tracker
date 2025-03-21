@@ -50,7 +50,7 @@ const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       retry: 2, // Retry failed requests twice
-      staleTime: 5 * 60 * 1000, // Data stays fresh for 5 minutes
+      staleTime: 30 * 1000, // Data stays fresh for 5 minutes
     },
     mutations: {
       retry: 0, // Don’t retry mutations by default

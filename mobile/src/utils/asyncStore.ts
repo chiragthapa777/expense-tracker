@@ -4,7 +4,7 @@ export const storeData = async (key: string, value: string) => {
   try {
     await AsyncStorage.setItem(key, value);
   } catch (e) {
-    console.log(e);
+    console.log("🚀 ~ storeData ~ e:", e)
   }
 };
 export const removeData = async (key: string) => {
@@ -17,7 +17,7 @@ export const removeData = async (key: string) => {
 
 export const getData = async (key: string): Promise<string | null> => {
   try {
-    const value = await AsyncStorage.getItem("my-key");
+    const value = await AsyncStorage.getItem(key);
     return value;
   } catch (e) {
     console.log(e);

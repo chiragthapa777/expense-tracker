@@ -1,19 +1,20 @@
-import React, { useRef } from "react";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Controller, useForm } from "react-hook-form";
-import { z } from "zod";
+import { loginApi } from "@/api/authApi";
 import { Button } from "@/components/ui/Button";
-import Text from "@/components/ui/Text";
 import { CustomTextInput } from "@/components/ui/CustomTextInput";
-import { View } from "react-native";
+import Text from "@/components/ui/Text";
+import { userAuthStore } from "@/store/auth";
 import { useColor } from "@/theme";
-import Checkbox from "expo-checkbox";
-import { removeData, storeData } from "@/utils/asyncStore";
+import { getData, removeData, storeData } from "@/utils/asyncStore";
+import { handleError } from "@/utils/errorUtils";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useNavigation } from "@react-navigation/native";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { LoginApi } from "@/api/authApi";
+import Checkbox from "expo-checkbox";
+import React, { useEffect, useRef } from "react";
+import { Controller, useForm } from "react-hook-form";
+import { View } from "react-native";
 import Toast from "react-native-toast-message";
-import AntDesign from '@expo/vector-icons/AntDesign';
-
+import { z } from "zod";
 
 const PASSWORD_REGEX =
   /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
@@ -34,11 +35,17 @@ type Props = {};
 export default function LoginForm({}: Props) {
   const color = useColor();
   const queryClient = useQueryClient();
+  const { setUser } = userAuthStore();
+  const emailRef = useRef<any>(null);
+  const passwordRef = useRef<any>(null);
+  const navigation = useNavigation();
 
   const {
     control,
-    formState: { errors },
+    formState: { errors, isSubmitting },
     handleSubmit,
+    reset,
+    setValue,
   } = useForm<z.infer<typeof loginFormSchema>>({
     resolver: zodResolver(loginFormSchema),
     defaultValues: {
@@ -49,22 +56,56 @@ export default function LoginForm({}: Props) {
     mode: "all",
   });
 
-  const emailRef = useRef<any>(null);
-  const passwordRef = useRef<any>(null);
+  useEffect(() => {
+    const loadEmail = async () => {
+      const email = await getData("rememberMeEmail");
+      if (email) {
+        setValue("email", email, {
+          shouldValidate: true,
+          shouldTouch: true,
+        });
+        setValue("rememberMe", true, {
+          shouldValidate: true,
+          shouldTouch: true,
+        });
+      }
+    };
+    emailRef.current?.focus();
+    loadEmail();
+  }, []);
 
   const mutation = useMutation({
-    mutationFn: LoginApi,
+    mutationFn: loginApi,
     onSuccess: async (data) => {
-      queryClient.invalidateQueries({ queryKey: ["todos"] });
+      Toast.show({
+        type: "customSuccess",
+        text1: "Login Successful",
+        position: "bottom",
+      });
+      reset();
+      storeData("accessToken", data.data.token);
+      queryClient.invalidateQueries({ queryKey: ["currentUser"] });
+      setUser(data.data.user);
+      navigation.reset({
+        index: 0,
+        routes: [{ name: "HomeTabs" }],
+      });
     },
-    onError: async (err) => {},
+    onError: async (err) => {
+      const { error, code, statusCode } = handleError(err);
+      Toast.show({
+        type: "customError",
+        text1: error,
+        position: "bottom",
+      });
+    },
   });
 
   const onSubmit = async (data: z.infer<typeof loginFormSchema>) => {
     if (data.rememberMe) {
-      await storeData("rememberMe:email", data.email);
+      await storeData("rememberMeEmail", data.email);
     } else {
-      removeData("rememberMe:email");
+      await removeData("rememberMeEmail");
     }
     mutation.mutate(data);
   };
@@ -149,44 +190,8 @@ export default function LoginForm({}: Props) {
       </View>
 
       {/* Submit Button */}
-      <Button onPress={handleSubmit(onSubmit)}>Login</Button>
-      <Button
-        onPress={() => {
-          console.log("test")
-          Toast.show({
-            type:"customSuccess",
-            text1:"This is message",
-            position:"bottom"
-          })
-        }}
-      >
-        Toast
-      </Button>
-      <Button
-        onPress={() => {
-          console.log("test")
-          Toast.show({
-            type:"customError",
-            text1:"This is message",
-            text2:"this can be a long message just bear",
-            position:"bottom"
-          })
-        }}
-      >
-        Toast
-      </Button>
-      <Button
-        onPress={() => {
-          console.log("test")
-          Toast.show({
-            type:"customInfo",
-            text1:"This is message",
-            text2:"It looks like TypeScript is complaining because the renderToast function is missing explicit types for its parameters. Let's fix that by adding proper TypeScript types. Here's the updated version:",
-            position:"bottom"
-          })
-        }}
-      >
-        Toast
+      <Button onPress={handleSubmit(onSubmit)} loading={isSubmitting}>
+        Login
       </Button>
     </View>
   );

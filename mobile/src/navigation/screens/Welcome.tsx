@@ -1,31 +1,49 @@
+import { getCurrentUserApi } from "@/api/authApi";
+import { useNavigation } from "@react-navigation/native";
+import { useQuery } from "@tanstack/react-query";
+import { useEffect } from "react";
 import { View } from "react-native";
 import Text from "../../components/ui/Text";
-import { useColor } from "../../theme";
 import { useWaitingDots } from "../../hooks/useWaitingDots";
-import { useEffect } from "react";
-import { getData } from "../../utils/asyncStore";
 import { userAuthStore } from "../../store/auth";
-import { useNavigation } from "@react-navigation/native";
+import { useColor } from "../../theme";
+import { getData } from "../../utils/asyncStore";
 
 const Welcome = () => {
   const color = useColor();
   const { waitingDots } = useWaitingDots();
-  const user = userAuthStore((s) => s.user);
-  const navigation = useNavigation();
+  const navigation = useNavigation<any>();
+  const setUser = userAuthStore((s) => s.setUser);
+
+  const { data: currentUser, isLoading, error } = useQuery({
+    queryKey: ["currentUser"],
+    queryFn: async () => {
+      const token = await getData("accessToken");
+      if (!token) {
+        throw new Error("No token found");
+      }
+      return getCurrentUserApi(); 
+    },
+    retry: 0,
+    staleTime: Infinity, // Keep data fresh indefinitely for this check
+  });
 
   useEffect(() => {
-    const loadUser = async () => {
-      const token = await getData("accessToken");
-      console.log(token);
-      if (!token) {
-        navigation.reset({
-          index: 0,
-          routes: [{ name: "Login" }],
-        });
-      }
-    };
-    loadUser();
-  }, []);
+    if (isLoading) return; 
+
+    if (currentUser) {
+      setUser(currentUser.data);
+      navigation.reset({
+        index: 0,
+        routes: [{ name: "HomeTabs" }],
+      });
+    } else if (error) {
+      navigation.reset({
+        index: 0,
+        routes: [{ name: "Login" }],
+      });
+    }
+  }, [currentUser, isLoading, error, navigation]);
 
   return (
     <View
@@ -33,6 +51,7 @@ const Welcome = () => {
         flex: 1,
         justifyContent: "center",
         alignItems: "center",
+        backgroundColor: color.background, 
       }}
     >
       <Text size="lg" weight="bold">
@@ -41,7 +60,9 @@ const Welcome = () => {
           Expense Tracker
         </Text>
       </Text>
-      <Text size="xs">Preparing your content. Please wait{waitingDots}</Text>
+      <Text size="xs" color={color.textSecondary}>
+        Preparing your content. Please wait{waitingDots}
+      </Text>
     </View>
   );
 };
