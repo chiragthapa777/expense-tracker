@@ -1,5 +1,12 @@
 import { Assets as NavigationAssets } from "@react-navigation/elements";
+import {
+  focusManager,
+  onlineManager,
+  QueryClient,
+  QueryClientProvider,
+} from "@tanstack/react-query";
 import { Asset } from "expo-asset";
+import * as Network from "expo-network";
 import * as SplashScreen from "expo-splash-screen";
 import * as React from "react";
 import {
@@ -12,15 +19,11 @@ import {
 } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { Navigation } from "./navigation";
-import {
-  focusManager,
-  onlineManager,
-  QueryClient,
-  QueryClientProvider,
-} from "@tanstack/react-query";
-import * as Network from "expo-network";
-import Toast, { BaseToast } from "react-native-toast-message";
+import { PortalProvider } from "@gorhom/portal";
 
+import { createNavigationContainerRef } from "@react-navigation/native";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import CustomToast from "./components/Toast";
 import {
   ColorProvider,
   darkColors,
@@ -28,11 +31,6 @@ import {
   MyDarkTheme,
   MyLightTheme,
 } from "./theme";
-import {
-  createNavigationContainerRef,
-  NavigationContainer,
-} from "@react-navigation/native";
-import CustomToast from "./components/Toast";
 
 Asset.loadAsync([
   ...NavigationAssets,
@@ -84,42 +82,46 @@ export function App() {
   const isDarkMode = React.useMemo(() => colorScheme === "dark", [colorScheme]);
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <SafeAreaProvider>
-        <View
-          style={{
-            backgroundColor: isDarkMode
-              ? darkColors.background
-              : lightColors.background,
-            flex: 1,
-          }}
-        >
-          <ColorProvider>
-            <StatusBar
-              backgroundColor={
-                isDarkMode ? darkColors.background : lightColors.background
-              }
-              barStyle={isDarkMode ? "light-content" : "dark-content"}
-            />
-            <Navigation
-              linking={{
-                enabled: "auto",
-                prefixes: [
-                  // Change the scheme to match your app's scheme defined in app.json
-                  "helloworld://",
-                ],
-              }}
-              ref={navigationRef}
-              theme={isDarkMode ? MyDarkTheme : MyLightTheme}
-              onReady={async () => {
-                // await new Promise((r)=> {setTimeout(r,10000)})
-                SplashScreen.hideAsync();
-              }}
-            />
-            <CustomToast />
-          </ColorProvider>
-        </View>
-      </SafeAreaProvider>
-    </QueryClientProvider>
+    <ColorProvider>
+      <QueryClientProvider client={queryClient}>
+        <SafeAreaProvider>
+          <GestureHandlerRootView style={{ flex: 1 }}>
+            <PortalProvider>
+              <View
+                style={{
+                  backgroundColor: isDarkMode
+                    ? darkColors.background
+                    : lightColors.background,
+                  flex: 1,
+                }}
+              >
+                <StatusBar
+                  backgroundColor={
+                    isDarkMode ? darkColors.background : lightColors.background
+                  }
+                  barStyle={isDarkMode ? "light-content" : "dark-content"}
+                />
+                <Navigation
+                  linking={{
+                    enabled: "auto",
+                    prefixes: [
+                      // Change the scheme to match your app's scheme defined in app.json
+                      "helloworld://",
+                    ],
+                  }}
+                  ref={navigationRef}
+                  theme={isDarkMode ? MyDarkTheme : MyLightTheme}
+                  onReady={async () => {
+                    // await new Promise((r)=> {setTimeout(r,10000)})
+                    SplashScreen.hideAsync();
+                  }}
+                />
+                <CustomToast />
+              </View>
+            </PortalProvider>
+          </GestureHandlerRootView>
+        </SafeAreaProvider>
+      </QueryClientProvider>
+    </ColorProvider>
   );
 }

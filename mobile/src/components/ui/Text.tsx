@@ -80,6 +80,7 @@ export default function Text({
           color: color ?? colors.text,
           fontSize: getFontSize(),
           fontWeight: getFontWeight(),
+          flexWrap:"wrap"
         },
         style,
       ]}

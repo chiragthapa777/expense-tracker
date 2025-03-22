@@ -11,6 +11,7 @@ import { Settings } from "./screens/Settings";
 import Welcome from "./screens/Welcome";
 import { HomeTabs } from "./screens/home-tabs";
 import withProtection from "@/hoc/Protected";
+import ProfileEdit from "./screens/ProfileEdit";
 
 
 
@@ -40,14 +41,20 @@ const RootStack = createNativeStackNavigator({
     },
     Profile: {
       screen: withProtection(Profile),
+      options:{
+        headerShown:false,
+      },
       linking: {
-        path: ":user(@[a-zA-Z0-9-_]+)",
-        parse: {
-          user: (value) => value.replace(/^@/, ""),
-        },
-        stringify: {
-          user: (value) => `@${value}`,
-        },
+        path: "profile",
+      },
+    },
+    ProfileEdit: {
+      screen: withProtection(ProfileEdit),
+      options:{
+        headerShown:false,
+      },
+      linking: {
+        path: "profile/edit",
       },
     },
     Settings: {

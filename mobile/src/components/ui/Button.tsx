@@ -98,7 +98,7 @@ export const Button = React.forwardRef<
         paddingHorizontal: 20,
       },
       icon: {
-        padding: 10,
+        padding: 5,
       },
     };
 

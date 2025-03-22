@@ -13,6 +13,7 @@ import Checkbox from "expo-checkbox";
 import React, { useEffect, useRef } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { View } from "react-native";
+import { TextInput } from "react-native-gesture-handler";
 import Toast from "react-native-toast-message";
 import { z } from "zod";
 
@@ -36,8 +37,8 @@ export default function LoginForm({}: Props) {
   const color = useColor();
   const queryClient = useQueryClient();
   const { setUser } = userAuthStore();
-  const emailRef = useRef<any>(null);
-  const passwordRef = useRef<any>(null);
+  const emailRef = React.createRef<TextInput>();
+  const passwordRef = React.createRef<TextInput>();
   const navigation = useNavigation();
 
   const {

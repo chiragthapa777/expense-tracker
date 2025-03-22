@@ -7,6 +7,7 @@ import LoginForm from "../../../components/LoginForm";
 import { Button } from "../../../components/ui/Button";
 import { SafeAreaView } from "react-native-safe-area-context";
 import KeyboardView from "@/components/ui/KeyboardView";
+import RegisterForm from "@/components/RegisterForm";
 
 type Props = {};
 
@@ -15,7 +16,8 @@ const Login = ({}: Props) => {
   const color = useColor();
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: color.background }}>{/* If there is not header in the navigation add, safeAreaView, for iso compulsory */}
+    <SafeAreaView style={{ flex: 1, backgroundColor: color.background }}>
+      {/* If there is not header in the navigation add, safeAreaView, for iso compulsory */}
       <KeyboardView style={{ flex: 1 }}>
         <ScrollView
           contentContainerStyle={{
@@ -31,7 +33,7 @@ const Login = ({}: Props) => {
           </View>
           <LoginTab activeTab={activeTab} setActiveTab={setActiveTab}>
             <View style={{ flexGrow: 1 }}>
-              <LoginForm />
+              {activeTab === "login" ? <LoginForm /> : <RegisterForm />}
             </View>
           </LoginTab>
         </ScrollView>
