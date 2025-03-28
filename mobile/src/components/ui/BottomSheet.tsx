@@ -23,7 +23,7 @@ export const CustomBottomSheet = React.forwardRef<
 >(
   (
     {
-      snapPoints = ["25%", "50%", "90%"],
+      snapPoints = ["25%", "50%", "70%", "90%"],
       onChange,
       enablePanDownToClose = true,
       children,
@@ -42,47 +42,49 @@ export const CustomBottomSheet = React.forwardRef<
     }, []);
 
     return (
-      <Portal>
-        <BottomSheet
-          ref={ref}
-          snapPoints={snapPoints}
-          enableDynamicSizing={true}
-          onChange={(
-            index: number,
-            position: number,
-            type: SNAP_POINT_TYPE
-          ) => {
-            onSheetChange(index);
-            if (onChange) {
-              onChange(index, position, type);
-            }
-          }}
-          enablePanDownToClose={enablePanDownToClose}
-          index={-1}
-          onClose={onClose}
-          handleIndicatorStyle={{
-            backgroundColor: color.border,
-          }}
-          handleStyle={{
-            backgroundColor: color.background,
-            borderTopEndRadius: 20,
-            borderTopStartRadius: 20,
-          }}
-          backgroundStyle={{
-            backgroundColor: color.background,
-          }}
-          backdropComponent={(props) => (
-            <BottomSheetBackdrop
-              {...props}
-              disappearsOnIndex={-1}
-              appearsOnIndex={0}
-              pressBehavior="close"
-            />
-          )}
-        >
-          <BottomSheetView style={{ flex: 1 }}>{children}</BottomSheetView>
-        </BottomSheet>
-      </Portal>
+      // <Portal>
+      <BottomSheet
+        ref={ref}
+        snapPoints={snapPoints}
+        enableDynamicSizing={true}
+        onChange={(index: number, position: number, type: SNAP_POINT_TYPE) => {
+          onSheetChange(index);
+          if (onChange) {
+            onChange(index, position, type);
+          }
+        }}
+        enablePanDownToClose={enablePanDownToClose}
+        index={-1}
+        onClose={onClose}
+        handleIndicatorStyle={{
+          backgroundColor: color.border,
+        }}
+        containerStyle={{
+          zIndex: 1000,
+        }}
+        handleStyle={{
+          backgroundColor: color.background,
+          borderTopEndRadius: 20,
+          borderTopStartRadius: 20,
+        }}
+        backgroundStyle={{
+          backgroundColor: color.background,
+        }}
+        backdropComponent={(props) => (
+          <BottomSheetBackdrop
+            {...props}
+            style={{
+              zIndex:1000
+            }}
+            disappearsOnIndex={-1}
+            appearsOnIndex={0}
+            pressBehavior="close"
+          />
+        )}
+      >
+        <BottomSheetView style={{ flex: 1 }}>{children}</BottomSheetView>
+      </BottomSheet>
+      // </Portal>
     );
   }
 );

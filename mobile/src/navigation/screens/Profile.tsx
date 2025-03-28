@@ -1,3 +1,4 @@
+import RegisterForm from "@/components/RegisterForm";
 import Avatar from "@/components/ui/Avatar";
 import BackButton from "@/components/ui/BackButton";
 import { CustomBottomSheet } from "@/components/ui/BottomSheet";
@@ -24,7 +25,7 @@ type Props = StaticScreenProps<{
   user: string;
 }>;
 
-export function Profile({ route }: Props) {
+export function Profile() {
   const color = useColor();
   const user = userAuthStore((state) => state.user);
   const { setUser } = userAuthStore();
@@ -67,7 +68,7 @@ export function Profile({ route }: Props) {
       }}
     >
       <CustomBottomSheet ref={sheetRef} onChange={handleSheetChange}>
-        <Text>Test</Text>
+       <RegisterForm/>
       </CustomBottomSheet>
       <SafeAreaView style={{ flex: 1 }}>
         <ScrollView
