@@ -1,4 +1,3 @@
-import { Portal } from "@gorhom/portal";
 import BottomSheet, {
   BottomSheetBackdrop,
   BottomSheetView,

@@ -5,8 +5,10 @@ import (
 	"github.com/chiragthapa777/expense-tracker-api/internal/database"
 	"github.com/chiragthapa777/expense-tracker-api/internal/logger"
 	"github.com/chiragthapa777/expense-tracker-api/internal/middleware"
+	"github.com/chiragthapa777/expense-tracker-api/internal/response"
 	"github.com/chiragthapa777/expense-tracker-api/internal/routes"
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/recover"
 )
 
 func main() {
@@ -17,7 +19,11 @@ func main() {
 
 	database.InitDB()
 
-	app := fiber.New()
+	app := fiber.New(fiber.Config{
+		ErrorHandler: response.CustomErrorHandler,
+	})
+
+	app.Use(recover.New()) // Middleware to recover from panic and pass to error handler
 
 	app.Use(middleware.CORSMiddleware())
 
