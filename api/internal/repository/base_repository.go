@@ -46,12 +46,9 @@ func (r *BaseRepository[T]) FindByID(id string, option Option) (*T, error) {
 	err := db.Where("id = ?", id).First(&entity).Error
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
-			return nil, nil // Or a custom error
+			return nil, ErrRecordNotFound // Or a custom error
 		}
 		return nil, err
-	}
-	if &entity == nil {
-		return nil, ErrRecordNotFound
 	}
 	return &entity, nil
 }
@@ -69,10 +66,30 @@ func (r *BaseRepository[T]) Delete(id string, option Option) error {
 
 func (r *BaseRepository[T]) Find(option Option) ([]T, error) {
 	db := r.getDB(option)
-	var entities []T
-	if err := db.Find(&entities).Error; err != nil {
+
+	queryBuilder := db.Model(new(T))
+	if option.QueryBuilder != nil {
+		queryBuilder = option.QueryBuilder
+	}
+
+	if option.WithUserId != nil {
+		keyName := "user_id"
+		if option.WithUserIdKey != nil {
+			keyName = *option.WithUserIdKey
+		}
+		queryBuilder.Where(keyName+" = ?", *option.WithUserId)
+	}
+
+	var total int64
+	if err := queryBuilder.Count(&total).Error; err != nil {
 		return nil, err
 	}
+
+	var entities []T = make([]T, 0)
+	if err := queryBuilder.Find(&entities).Error; err != nil {
+		return nil, err
+	}
+
 	return entities, nil
 }
 
@@ -89,6 +106,14 @@ func (r *BaseRepository[T]) FindWithPagination(option Option, searchFields []str
 	queryBuilder := db.Model(new(T))
 	if option.QueryBuilder != nil {
 		queryBuilder = option.QueryBuilder
+	}
+
+	if option.WithUserId != nil {
+		keyName := "user_id"
+		if option.WithUserIdKey != nil {
+			keyName = *option.WithUserIdKey
+		}
+		queryBuilder.Where(keyName+" = ?", *option.WithUserId)
 	}
 
 	if option.PaginationDto.Search != "" {

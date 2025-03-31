@@ -10,6 +10,8 @@ type Option struct {
 	Tx            *gorm.DB // for transaction
 	PaginationDto *dto.PaginationQueryDto
 	QueryBuilder  *gorm.DB // for custom additional filters and joins
+	WithUserId    *string
+	WithUserIdKey *string // defaults to user_id
 }
 
 type PaginationResult[T any] struct {

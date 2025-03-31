@@ -28,10 +28,7 @@ func UpdateProfilePicture(body dto.UserProfileUpdateDto, currentUser models.User
 	// Handle profile update
 	if body.ProfileId != nil {
 		// Get current profile if exists
-		currentProfile, err := fileRepository.FindByUserProfileId(currentUser.ID, option)
-		if err != nil {
-			return err
-		}
+		currentProfile, _ := fileRepository.FindByUserProfileId(currentUser.ID, option)
 
 		// Get new profile
 		newProfile, err := fileRepository.FindByID(*body.ProfileId, option)

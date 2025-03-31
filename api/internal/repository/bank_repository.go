@@ -15,6 +15,19 @@ func NewBankRepository() *BankRepository {
 	}
 }
 
+func GetBankValidSortColumn() map[string]string {
+	return map[string]string{
+		"id":        "id",
+		"name":      "name",
+		"lastName":  "last_name",
+		"createdAt": "created_at",
+	}
+}
+func (r *BankRepository) FindWithPagination(option Option) (*PaginationResult[models.Bank], error) {
+	searchFields := []string{"name"}
+	return r.BaseRepository.FindWithPagination(option, searchFields, GetBankValidSortColumn())
+}
+
 // FindWithUserAccounts retrieves a bank with its associated user accounts
 func (r *BankRepository) FindWithUserAccounts(id string, option Option) (*models.Bank, error) {
 	db := r.getDB(option)
@@ -38,4 +51,18 @@ func (r *BankRepository) FindAllWithUserAccounts(option Option) ([]models.Bank, 
 		return nil, err
 	}
 	return banks, nil
+}
+
+func (r *BankRepository) FindByName(name string, option Option) (*models.Bank, error) {
+	db := r.getDB(option)
+	var bank models.Bank
+	err := db.Where("name ILIKE ?", name).First(&bank).Error
+	return &bank, err
+}
+
+func (r *BankRepository) FindByNameExceptId(name string, id string, option Option) ([]models.Bank, error) {
+	db := r.getDB(option)
+	var banks []models.Bank = make([]models.Bank, 0)
+	err := db.Where("name ILIKE ? and id <> ?", name, id).Find(&banks).Error
+	return banks, err
 }

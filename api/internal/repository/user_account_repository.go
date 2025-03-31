@@ -2,7 +2,6 @@ package repository
 
 import (
 	"github.com/chiragthapa777/expense-tracker-api/internal/models"
-	"gorm.io/gorm"
 )
 
 type UserAccountRepository struct {
@@ -15,37 +14,25 @@ func NewUserAccountRepository() *UserAccountRepository {
 	}
 }
 
-// FindWithAssociations retrieves a user account with all its associations
-func (r *UserAccountRepository) FindWithAssociations(id string, option Option) (*models.UserAccount, error) {
-	db := r.getDB(option)
-	var account models.UserAccount
-	err := db.Preload("Bank").Preload("Wallet").Preload("User").Preload("Ledgers").
-		Where("id = ?", id).First(&account).Error
-	if err != nil {
-		if err == gorm.ErrRecordNotFound {
-			return nil, nil
-		}
-		return nil, err
+func GetUserAccountValidSortColumn() map[string]string {
+	return map[string]string{
+		"id":            "id",
+		"name":          "name",
+		"accountNumber": "account_number",
+		"phoneNumber":   "phone_number",
+		"lastName":      "last_name",
+		"createdAt":     "created_at",
 	}
-	return &account, nil
 }
 
-// FindByUserID retrieves all accounts for a specific user
-func (r *UserAccountRepository) FindByUserID(userID string, option Option) ([]models.UserAccount, error) {
-	db := r.getDB(option)
-	var accounts []models.UserAccount
-	err := db.Preload("Bank").Preload("Wallet").
-		Where("user_id = ?", userID).Find(&accounts).Error
-	if err != nil {
-		return nil, err
-	}
-	return accounts, nil
+func (r *UserAccountRepository) FindWithPagination(option Option) (*PaginationResult[models.UserAccount], error) {
+	searchFields := []string{"name", "account_number", "phone_number"}
+	return r.BaseRepository.FindWithPagination(option, searchFields, GetUserAccountValidSortColumn())
 }
 
-// UpdateBalance updates the balance of a user account
-func (r *UserAccountRepository) UpdateBalance(id string, amount float64, option Option) error {
+func (r *UserAccountRepository) FindByName(name string, option Option) ([]models.UserAccount, error) {
 	db := r.getDB(option)
-	return db.Model(&models.UserAccount{}).
-		Where("id = ?", id).
-		Update("balance", gorm.Expr("balance + ?", amount)).Error
+	var banks []models.UserAccount
+	err := db.Where("name ILIKE ?", name).Find(&banks).Error
+	return banks, err
 }

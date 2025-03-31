@@ -26,6 +26,7 @@ func main() {
 	app.Use(recover.New()) // Middleware to recover from panic and pass to error handler
 
 	app.Use(middleware.CORSMiddleware())
+	app.Use(middleware.HttpLogger())
 
 	routes.SetUpRoutes(app)
 
